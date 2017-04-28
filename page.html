@@ -1,0 +1,4 @@
+<!DOCTYPE html>
+<html><head><meta charset="utf-8"><meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1"><script>
+!function(){"use strict";function t(t,o){for(var r in o)t[r]=o[r];return t}function o(t,o,r){this.data=t,this.source=o,this.origin=r}o.prototype={constructor:o,post:function(o){this.source.postMessage(JSON.stringify(t({},o||{},this.data._requestID)),this.origin)},postData:function(t){this.post({data:t})},postError:function(t){this.post({error:t})}},function(t){window.addEventListener("message",function(r){var s=JSON.parse(r.data),i=r.source,n=r.origin;t(new o(s,i,n))},!1)}(function(t){var o=t.data,r=t.postError,s=t.postData;if(!o.obj)return r('missing "obj" property');var i=window[o.obj];if(!i)return r(o.obj+" not supported");if(!o.op)return r('missing "op" property');if(!(o.op in i))return r("method does not exists "+o.obj+"."+o.op);try{s(i[o.op].apply(i,o.args||[]))}catch(t){r(t.message)}})}();
+</script></head><body></body></html>

@@ -1,0 +1,35 @@
+{
+  "name": "cors-storage",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "build:page-script": "rollup -c rollup.config.js -f iife -o _page.js",
+    "build:page": "cat _head.html _page.js _foot.html > page.html",
+    "build:client": "rollup -f es -i src/local-storage.js -o index.js",
+    "build": "npm run build:page-script && npm run build:page && npm run build:client",
+    "prepublish": "npm run build"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/InGo-LLP/cors-storage.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/InGo-LLP/cors-storage/issues"
+  },
+  "homepage": "https://github.com/InGo-LLP/cors-storage#readme",
+  "dependencies": {
+    "document-promises-pinkie": "^3.1.2",
+    "pinkie-promise": "^2.0.1"
+  },
+  "devDependencies": {
+    "eslint": "^3.19.0",
+    "eslint-plugin-promise": "^3.5.0",
+    "rollup": "^0.41.6",
+    "rollup-plugin-commonjs": "^8.0.2",
+    "rollup-plugin-node-resolve": "^3.0.0",
+    "rollup-plugin-uglify": "^1.0.2"
+  }
+}
