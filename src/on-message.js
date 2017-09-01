@@ -10,7 +10,9 @@ PostHelper.prototype = {
   constructor: PostHelper,
 
   post: function(msg) {
-    this.source.postMessage(JSON.stringify(merge({}, msg || {}, { _requestID: this.data._requestID })), this.origin);
+    var data = merge({}, msg || {});
+    data = merge(data, { _requestID: this.data._requestID });
+    this.source.postMessage(JSON.stringify(data), this.origin);
   },
 
   postData: function(msg) {
