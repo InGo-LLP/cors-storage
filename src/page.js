@@ -2,8 +2,8 @@ import onMessage from "./on-message";
 
 onMessage(function(helper) {
   var data = helper.data;
-  var postError = helper.postError;
-  var postData = helper.postData;
+  var postError = helper.postError.bind(helper);
+  var postData = helper.postData.bind(helper);
 
   if (!data.obj) {
     return postError('missing "obj" property');
