@@ -88,7 +88,9 @@ IFrame.prototype.send = function(data) {
     var id = uid();
     this.messageQueue[id] = { resolve: _resolve, reject: _reject };
     //IE8 and IE9 need  target will be iframe domain (for mystic security reasons)
-    this.frame.contentWindow.postMessage(JSON.stringify(merge({}, data, { _requestID: id })), this.baseUrl);
+    data = merge({}, data);
+    data = merge(data, { _requestID: id });
+    this.frame.contentWindow.postMessage(JSON.stringify(data), this.baseUrl);
   } else {
     this.preLoadQueue.push({ data: data, resolve: _resolve, reject: _reject });
   }

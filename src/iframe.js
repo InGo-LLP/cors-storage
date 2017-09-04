@@ -70,7 +70,7 @@ function IFrame(baseUrl, pagePath) {
     .then(function() {
       document.body.appendChild(that.frame);
     })
-    .catch(() => {});
+    .catch(function() {});
 }
 
 IFrame.prototype.send = function(data) {
