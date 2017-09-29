@@ -1,5 +1,3 @@
-import Promise from "pinkie-promise";
-
 import IFrame from "./iframe";
 
 function RemoteLocalStorage(options) {

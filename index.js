@@ -1,16 +1,9 @@
-import Promise from 'pinkie-promise';
-import { contentLoaded } from 'document-promises-pinkie';
-
-function merge(obj, props) {
-  for (var i in props)
-    obj[i] = props[i];
-  return obj;
-}
+import { contentLoaded } from 'document-promises';
 
 var domain = document.domain;
 
 function uid() {
-  return domain + "-" + 1 * new Date() + "-" + (0 | (Math.random() * 9e6)).toString(36);
+  return domain + "-" + 1 * new Date() + "-" + (0 | Math.random() * 9e6).toString(36);
 }
 
 function IFrame(baseUrl, pagePath) {
@@ -28,59 +21,49 @@ function IFrame(baseUrl, pagePath) {
 
   this.loaded = false;
 
-  this.frame.addEventListener(
-    "load",
-    function() {
-      that.loaded = true;
+  this.frame.addEventListener("load", function () {
+    that.loaded = true;
 
-      var items = that.preLoadQueue;
-      that.preLoadQueue = [];
+    var items = that.preLoadQueue;
+    that.preLoadQueue = [];
 
-      return items.map(function(message) {
-        return that.send(message.data).then(message.resolve, message.reject);
-      });
-    },
-    false
-  );
+    return items.map(function (message) {
+      return that.send(message.data).then(message.resolve, message.reject);
+    });
+  }, false);
 
   // set src after onload callback not before!!!
   this.frame.src = baseUrl + pagePath;
 
-  window.addEventListener(
-    "message",
-    function(e) {
-      if (e.origin.indexOf(that.baseUrl) !== 0) {
+  window.addEventListener("message", function (e) {
+    if (e.origin.indexOf(that.baseUrl) !== 0) {
+      return;
+    }
+
+    var data = JSON.parse(e.data);
+    var requestData = that.messageQueue[data._requestID];
+    if (requestData) {
+      if ("error" in data) {
+        var error = new Error(data.error);
+        requestData.reject(error);
+
         return;
       }
 
-      var data = JSON.parse(e.data);
-      var requestData = that.messageQueue[data._requestID];
-      if (requestData) {
-        if ("error" in data) {
-          var error = new Error(data.error);
-          requestData.reject(error);
+      requestData.resolve(data.data);
 
-          return;
-        }
+      delete that.messageQueue[data._requestID];
+    }
+  }, false);
 
-        requestData.resolve(data.data);
-
-        delete that.messageQueue[data._requestID];
-      }
-    },
-    false
-  );
-
-  contentLoaded
-    .then(function() {
-      document.body.appendChild(that.frame);
-    })
-    .catch(() => {});
+  contentLoaded.then(function () {
+    document.body.appendChild(that.frame);
+  }).catch(function () {});
 }
 
-IFrame.prototype.send = function(data) {
+IFrame.prototype.send = function (data) {
   var _resolve, _reject;
-  var promise = new Promise(function(resolve, reject) {
+  var promise = new Promise(function (resolve, reject) {
     _resolve = resolve;
     _reject = reject;
   });
@@ -88,8 +71,7 @@ IFrame.prototype.send = function(data) {
     var id = uid();
     this.messageQueue[id] = { resolve: _resolve, reject: _reject };
     //IE8 and IE9 need  target will be iframe domain (for mystic security reasons)
-    data = merge({}, data);
-    data = merge(data, { _requestID: id });
+    data = Object.assign({}, data, { _requestID: id });
     this.frame.contentWindow.postMessage(JSON.stringify(data), this.baseUrl);
   } else {
     this.preLoadQueue.push({ data: data, resolve: _resolve, reject: _reject });
@@ -103,7 +85,7 @@ function RemoteLocalStorage(options) {
 }
 
 RemoteLocalStorage.prototype = {
-  getItem: function(name) {
+  getItem: function getItem(name) {
     return this.transport.send({
       obj: "localStorage",
       op: "getItem",
@@ -111,7 +93,7 @@ RemoteLocalStorage.prototype = {
     });
   },
 
-  setItem: function(name, value) {
+  setItem: function setItem(name, value) {
     return this.transport.send({
       obj: "localStorage",
       op: "setItem",
@@ -119,7 +101,7 @@ RemoteLocalStorage.prototype = {
     });
   },
 
-  removeItem: function(name) {
+  removeItem: function removeItem(name) {
     return this.transport.send({
       obj: "localStorage",
       op: "removeItem",
@@ -127,37 +109,31 @@ RemoteLocalStorage.prototype = {
     });
   },
 
-  getItems: function(keys) {
+  getItems: function getItems(keys) {
     var that = this;
-    return Promise.all(
-      keys.map(function(key) {
-        return that.getItem(key);
-      })
-    ).then(function(values) {
+    return Promise.all(keys.map(function (key) {
+      return that.getItem(key);
+    })).then(function (values) {
       var obj = {};
-      keys.forEach(function(key, idx) {
+      keys.forEach(function (key, idx) {
         obj[key] = values[idx];
       });
       return obj;
     });
   },
 
-  removeItems: function(keys) {
+  removeItems: function removeItems(keys) {
     var that = this;
-    return Promise.all(
-      keys.map(function(key) {
-        return that.removeItem(key);
-      })
-    );
+    return Promise.all(keys.map(function (key) {
+      return that.removeItem(key);
+    }));
   },
 
-  setItems: function(obj) {
+  setItems: function setItems(obj) {
     var that = this;
-    return Promise.all(
-      Object.keys(obj).map(function(key) {
-        return that.setItem(key, obj[key]);
-      })
-    );
+    return Promise.all(Object.keys(obj).map(function (key) {
+      return that.setItem(key, obj[key]);
+    }));
   }
 };
 
