@@ -4,6 +4,18 @@ import uglify from "rollup-plugin-uglify";
 import inject from "rollup-plugin-inject";
 import babel from "rollup-plugin-babel";
 
+const POLYFILLS = {
+  Promise: "pinkie-promise",
+  "Object.assign": "object-assign"
+};
+
+const INJECTIONS = Object.entries(POLYFILLS).map(([nativeObj, packageName]) =>
+  inject({
+    exclude: `./node_modules/${packageName}/**`,
+    [nativeObj]: packageName
+  })
+);
+
 export default {
   input: "src/page.js",
   plugins: [
@@ -14,29 +26,8 @@ export default {
     commonjs({
       ignoreGlobal: true
     }),
-    inject({
-      // control which files this plugin applies to
-      // with include/exclude
-      include: "**/*.js",
-      exclude: ["node_modules/pinkie-promise/**", "node_modules/unfetch/**", "node_modules/object-assign/**"],
-
-      Promise: "pinkie-promise",
-      fetch: "unfetch",
-      "Object.assign": "object-assign"
-    }),
+    ...INJECTIONS,
     babel({
-      presets: [
-        [
-          "env",
-          {
-            targets: {
-              browsers: ["IE 10"]
-            },
-            loose: true,
-            modules: false
-          }
-        ]
-      ],
       exclude: ["node_modules/**"]
     }),
     uglify()
