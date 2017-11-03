@@ -1,14 +1,13 @@
 {
   "name": "cors-storage",
-  "version": "1.0.5",
+  "version": "1.1.0",
   "description": "",
   "main": "index.js",
   "scripts": {
     "build:page-script": "rollup -c rollup.config.page-script.js -i ./src/page.js -f iife -o _page.js",
     "build:page": "cat _head.html _page.js _foot.html > page.html",
     "build:client": "rollup -c rollup.config.client.js -f es -i ./src/storage.js -o index.js",
-    "build:client:dist":
-      "rollup -c rollup.config.page-script.js -n RemoteStorage -f iife -i ./src/storage.js -o dist.js",
+    "build:client:dist": "rollup -c rollup.config.page-script.js -n RemoteStorage -f iife -i ./src/storage.js -o dist.js",
     "build": "npm run build:page-script && npm run build:page && npm run build:client && npm run build:client:dist",
     "prepare": "npm run build"
   },
