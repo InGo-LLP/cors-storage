@@ -1,4 +1,6 @@
-import { contentLoaded } from "document-promises";
+import { contentLoaded } from "document-promises-pinkie";
+import Promise from "pinkie-promise";
+import assign from "object-assign";
 
 var domain = document.domain;
 
@@ -81,7 +83,7 @@ IFrame.prototype.send = function(data) {
     var id = uid();
     this.messageQueue[id] = { resolve: _resolve, reject: _reject };
     //IE8 and IE9 need  target will be iframe domain (for mystic security reasons)
-    data = Object.assign({}, data, { _requestID: id });
+    data = assign({}, data, { _requestID: id });
     this.frame.contentWindow.postMessage(JSON.stringify(data), this.baseUrl);
   } else {
     this.preLoadQueue.push({ data: data, resolve: _resolve, reject: _reject });

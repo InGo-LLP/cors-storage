@@ -1,4 +1,6 @@
-import { contentLoaded } from 'document-promises';
+import { contentLoaded } from 'document-promises-pinkie';
+import Promise from 'pinkie-promise';
+import assign from 'object-assign';
 
 var domain = document.domain;
 
@@ -71,7 +73,7 @@ IFrame.prototype.send = function (data) {
     var id = uid();
     this.messageQueue[id] = { resolve: _resolve, reject: _reject };
     //IE8 and IE9 need  target will be iframe domain (for mystic security reasons)
-    data = Object.assign({}, data, { _requestID: id });
+    data = assign({}, data, { _requestID: id });
     this.frame.contentWindow.postMessage(JSON.stringify(data), this.baseUrl);
   } else {
     this.preLoadQueue.push({ data: data, resolve: _resolve, reject: _reject });
@@ -79,15 +81,16 @@ IFrame.prototype.send = function (data) {
   return promise;
 };
 
-function RemoteLocalStorage(options) {
+function RemoteStorage(options) {
   this.prefix = options.prefix || "";
   this.transport = new IFrame(options.baseUrl, options.pagePath);
+  this.obj = options.obj || "localStorage";
 }
 
-RemoteLocalStorage.prototype = {
+RemoteStorage.prototype = {
   getItem: function getItem(name) {
     return this.transport.send({
-      obj: "localStorage",
+      obj: this.obj,
       op: "getItem",
       args: [this.prefix + ":" + name]
     });
@@ -95,7 +98,7 @@ RemoteLocalStorage.prototype = {
 
   setItem: function setItem(name, value) {
     return this.transport.send({
-      obj: "localStorage",
+      obj: this.obj,
       op: "setItem",
       args: [this.prefix + ":" + name, value]
     });
@@ -103,7 +106,7 @@ RemoteLocalStorage.prototype = {
 
   removeItem: function removeItem(name) {
     return this.transport.send({
-      obj: "localStorage",
+      obj: this.obj,
       op: "removeItem",
       args: [this.prefix + ":" + name]
     });
@@ -137,4 +140,4 @@ RemoteLocalStorage.prototype = {
   }
 };
 
-export default RemoteLocalStorage;
+export default RemoteStorage;

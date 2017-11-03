@@ -4,10 +4,12 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "build:page-script": "rollup -c rollup.config.page-script.js -f iife -o _page.js",
+    "build:page-script": "rollup -c rollup.config.page-script.js -i ./src/page.js -f iife -o _page.js",
     "build:page": "cat _head.html _page.js _foot.html > page.html",
-    "build:client": "rollup -c rollup.config.client.js -f es -i src/local-storage.js -o index.js",
-    "build": "npm run build:page-script && npm run build:page && npm run build:client",
+    "build:client": "rollup -c rollup.config.client.js -f es -i ./src/storage.js -o index.js",
+    "build:client:dist":
+      "rollup -c rollup.config.page-script.js -n RemoteStorage -f iife -i ./src/storage.js -o dist.js",
+    "build": "npm run build:page-script && npm run build:page && npm run build:client && npm run build:client:dist",
     "prepare": "npm run build"
   },
   "repository": {
@@ -21,15 +23,18 @@
   },
   "homepage": "https://github.com/InGo-LLP/cors-storage#readme",
   "dependencies": {
-    "document-promises": "^3.1.3",
+    "document-promises-pinkie": "^3.1.5",
+    "object-assign": "^4.1.1",
     "pinkie-promise": "^2.0.1"
   },
   "devDependencies": {
+    "babel-core": "^6.26.0",
+    "babel-preset-env": "^1.6.1",
     "eslint": "^4.5.0",
     "eslint-plugin-promise": "^3.5.0",
     "rollup": "^0.49.2",
+    "rollup-plugin-babel": "^3.0.2",
     "rollup-plugin-commonjs": "^8.2.0",
-    "rollup-plugin-inject": "^2.0.0",
     "rollup-plugin-node-resolve": "^3.0.0",
     "rollup-plugin-uglify": "^2.0.1"
   }

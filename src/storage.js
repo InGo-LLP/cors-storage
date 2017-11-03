@@ -1,14 +1,16 @@
 import IFrame from "./iframe";
+import Promise from "pinkie-promise";
 
-function RemoteLocalStorage(options) {
+function RemoteStorage(options) {
   this.prefix = options.prefix || "";
   this.transport = new IFrame(options.baseUrl, options.pagePath);
+  this.obj = options.obj || "localStorage";
 }
 
-RemoteLocalStorage.prototype = {
+RemoteStorage.prototype = {
   getItem: function(name) {
     return this.transport.send({
-      obj: "localStorage",
+      obj: this.obj,
       op: "getItem",
       args: [this.prefix + ":" + name]
     });
@@ -16,7 +18,7 @@ RemoteLocalStorage.prototype = {
 
   setItem: function(name, value) {
     return this.transport.send({
-      obj: "localStorage",
+      obj: this.obj,
       op: "setItem",
       args: [this.prefix + ":" + name, value]
     });
@@ -24,7 +26,7 @@ RemoteLocalStorage.prototype = {
 
   removeItem: function(name) {
     return this.transport.send({
-      obj: "localStorage",
+      obj: this.obj,
       op: "removeItem",
       args: [this.prefix + ":" + name]
     });
@@ -64,4 +66,4 @@ RemoteLocalStorage.prototype = {
   }
 };
 
-export default RemoteLocalStorage;
+export default RemoteStorage;

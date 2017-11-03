@@ -1,3 +1,5 @@
+import assign from "object-assign";
+
 function PostHelper(data, source, origin) {
   this.data = data;
   this.source = source;
@@ -8,7 +10,7 @@ PostHelper.prototype = {
   constructor: PostHelper,
 
   post: function(msg) {
-    var data = Object.assign({}, msg || {}, { _requestID: this.data._requestID });
+    var data = assign({}, msg || {}, { _requestID: this.data._requestID });
     this.source.postMessage(JSON.stringify(data), this.origin);
   },
 
