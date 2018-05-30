@@ -1,4 +1,4 @@
-import assign from "object-assign";
+import assign from "ingo-deep-defaults";
 
 function PostHelper(data, source, origin) {
   this.data = data;

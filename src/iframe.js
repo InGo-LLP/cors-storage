@@ -1,6 +1,5 @@
-import { contentLoaded } from "document-promises-pinkie";
-import Promise from "pinkie-promise";
-import assign from "object-assign";
+import { contentLoaded } from "./content-loaded";
+import assign from "ingo-deep-defaults";
 
 var domain = document.domain;
 

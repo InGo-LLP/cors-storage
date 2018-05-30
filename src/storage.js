@@ -1,5 +1,4 @@
 import IFrame from "./iframe";
-import Promise from "pinkie-promise";
 
 function RemoteStorage(options) {
   this.prefix = options.prefix || "";
