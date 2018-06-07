@@ -1,17 +1,15 @@
 import assign from 'ingo-deep-defaults';
 
-function contentLoaded() {
-  return new Promise(function (resolve) {
-    var state = document.readyState;
-    if (state === "interactive" || state === "complete") {
-      resolve();
-    } else {
-      document.addEventListener("DOMContentLoaded", function () {
-        return resolve();
-      });
-    }
-  });
-}
+var contentLoaded = new Promise(function (resolve) {
+  var state = document.readyState;
+  if (state === "interactive" || state === "complete") {
+    resolve();
+  } else {
+    document.addEventListener("DOMContentLoaded", function () {
+      return resolve();
+    });
+  }
+});
 
 var domain = document.domain;
 
